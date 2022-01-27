@@ -64,6 +64,10 @@ class _MyHomePageState extends State<MyHomePage> {
     final ButtonStyle style =
         ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
     */
+
+    //Answer button size
+    const Size koko = Size(150, 235);
+
     //Trying to make Gradient background color for whole app.
     //return Scaffold(
     return Container(
@@ -78,8 +82,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       child: Scaffold(
-        //extendBodyBehindAppBar: true,
-        //backgroundColor: Colors.grey.shade800,
         backgroundColor: Colors.transparent,
         primary: false,
         /* Disabled AppBar to see if can design more pleasing UI
@@ -104,9 +106,11 @@ class _MyHomePageState extends State<MyHomePage> {
       ),*/
         body: Container(
           alignment: Alignment.topCenter,
-          padding: const EdgeInsets.symmetric(
-            vertical: 90.0,
-            horizontal: 10.0,
+          padding: const EdgeInsets.only(
+            top: 130.0,
+            bottom: 90.0,
+            left: 10.0,
+            right: 10.0,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -122,29 +126,52 @@ class _MyHomePageState extends State<MyHomePage> {
                   fontSize: 40,
                 ),
               ),
-              const SizedBox(height: 80),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(300, 70),
-                  primary: Colors.red,
-                  onPrimary: Colors.black87,
-                  textStyle: const TextStyle(fontSize: 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
+              const SizedBox(height: 120),
+              Row(
+                //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: koko,
+                      primary: const Color(0xFFDD3434),
+                      onPrimary: Colors.black87,
+                      textStyle: const TextStyle(fontSize: 50),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(35),
+                          bottomLeft: Radius.circular(35),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: const Text(
+                      'Hot',
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
-                onPressed: () {},
-                child: const Text('Hotter'),
-              ),
-              const SizedBox(height: 27),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.blue.shade600,
-                  onPrimary: Colors.black,
-                  textStyle: const TextStyle(fontSize: 50),
-                ),
-                onPressed: () {},
-                child: const Text('Colder'),
+                  const SizedBox(width: 13),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: koko,
+                      primary: const Color(0xFF1F94DE),
+                      onPrimary: Colors.black,
+                      textStyle: const TextStyle(fontSize: 50),
+                      shape: const RoundedRectangleBorder(
+                        //borderRadius: BorderRadius.circular(50),
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(35),
+                          bottomRight: Radius.circular(35),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: const Text(
+                      'Cold',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
