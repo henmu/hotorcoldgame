@@ -2,6 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 void main() {
+  //Making android status bar transparent.
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+  ));
+
+  //Might help with quality of gradient background, but needs more testing.
+  //Paint.enableDithering = true;
+
   runApp(const MyApp());
 }
 
@@ -55,59 +64,90 @@ class _MyHomePageState extends State<MyHomePage> {
     final ButtonStyle style =
         ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
     */
-    return Scaffold(
-      //extendBodyBehindAppBar: true,
-      backgroundColor: Colors.grey.shade800,
-      primary: false,
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-        backgroundColor: Colors.white,
-        toolbarHeight: 40,
+    //Trying to make Gradient background color for whole app.
+    //return Scaffold(
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: FractionalOffset(1.0, 0.0),
+          end: FractionalOffset(1.0, 1.0),
+          colors: [
+            Color(0xFF212121),
+            Color(0xFF171717),
+          ],
+        ),
       ),
-      body: Container(
-        alignment: Alignment.topCenter,
-        padding: const EdgeInsets.all(30.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const Text(
-              'Is "City Name" hotter or colder than "Second City Name"',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Roboto',
-                letterSpacing: 0.5,
-                fontSize: 40,
-              ),
+      child: Scaffold(
+        //extendBodyBehindAppBar: true,
+        //backgroundColor: Colors.grey.shade800,
+        backgroundColor: Colors.transparent,
+        primary: false,
+        /* Disabled AppBar to see if can design more pleasing UI
+      appBar: AppBar(
+        title: Text(widget.title),
+        //backgroundColor: Colors.white,
+        toolbarHeight: 40,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF3366FF),
+                Color(0xFF00CCFF),
+              ],
+              begin: FractionalOffset(0.0, 0.0),
+              end: FractionalOffset(1.0, 1.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp,
             ),
-            const SizedBox(height: 80),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                fixedSize: const Size(300, 70),
-                primary: Colors.red,
-                onPrimary: Colors.black87,
-                textStyle: const TextStyle(fontSize: 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
+          ),
+        ),
+      ),*/
+        body: Container(
+          alignment: Alignment.topCenter,
+          padding: const EdgeInsets.symmetric(
+            vertical: 90.0,
+            horizontal: 10.0,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const Text(
+                'Is "City Name" hotter or colder than "Second City Name"',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Roboto',
+                  letterSpacing: 0.5,
+                  fontSize: 40,
                 ),
               ),
-              onPressed: () {},
-              child: const Text('Hotter'),
-            ),
-            const SizedBox(height: 27),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: Colors.blue.shade600,
-                onPrimary: Colors.black,
-                textStyle: const TextStyle(fontSize: 50),
+              const SizedBox(height: 80),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  fixedSize: const Size(300, 70),
+                  primary: Colors.red,
+                  onPrimary: Colors.black87,
+                  textStyle: const TextStyle(fontSize: 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                ),
+                onPressed: () {},
+                child: const Text('Hotter'),
               ),
-              onPressed: () {},
-              child: const Text('Colder'),
-            ),
-          ],
+              const SizedBox(height: 27),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.blue.shade600,
+                  onPrimary: Colors.black,
+                  textStyle: const TextStyle(fontSize: 50),
+                ),
+                onPressed: () {},
+                child: const Text('Colder'),
+              ),
+            ],
+          ),
         ),
       ),
     );
