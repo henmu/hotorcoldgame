@@ -41,7 +41,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
-
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
@@ -58,6 +57,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _score = 0;
+
+  void _increaseScore() {
+    setState(() {
+      _score++;
+    });
+  }
+
+  void _resetScore() {
+    setState(() {
+      _score = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     /*
@@ -115,6 +128,28 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Score:  ',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 37,
+                      fontFamily: 'Roboco',
+                    ),
+                  ),
+                  Text(
+                    '$_score',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Roboco',
+                      fontSize: 50,
+                    ),
+                  ),
+                ],
+              ),
               const Text(
                 'Is "City Name" hotter or colder than "Second City Name"',
                 textAlign: TextAlign.center,
@@ -144,7 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: _increaseScore,
                     child: const Text(
                       'Hot',
                       textAlign: TextAlign.center,
@@ -165,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: _resetScore,
                     child: const Text(
                       'Cold',
                       textAlign: TextAlign.center,
