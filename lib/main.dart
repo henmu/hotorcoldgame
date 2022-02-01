@@ -58,16 +58,16 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _score = 0;
+  String _cityname1 = "City name yksi";
+  String _cityname2 = "City name kaksi";
 
-  void _increaseScore() {
+  void _result(bool answer) {
     setState(() {
-      _score++;
-    });
-  }
-
-  void _resetScore() {
-    setState(() {
-      _score = 0;
+      if (answer == true) {
+        _score++;
+      } else {
+        _score = 0;
+      }
     });
   }
 
@@ -150,10 +150,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ],
               ),
-              const Text(
-                'Is "City Name" hotter or colder than "Second City Name"',
+              Text(
+                'Is ' +
+                    _cityname1 +
+                    ' hotter or colder than ' +
+                    _cityname2 +
+                    '?',
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Roboto',
@@ -179,7 +183,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                     ),
-                    onPressed: _increaseScore,
+                    //onPressed: _increaseScore,
+                    onPressed: () => {_result(true)},
                     child: const Text(
                       'Hot',
                       textAlign: TextAlign.center,
@@ -200,7 +205,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                     ),
-                    onPressed: _resetScore,
+                    onPressed: () => {_result(false)},
                     child: const Text(
                       'Cold',
                       textAlign: TextAlign.center,
