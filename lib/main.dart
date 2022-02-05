@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
 import 'question.dart';
 
@@ -14,6 +17,32 @@ void main() {
   //Paint.enableDithering = true;
 
   runApp(const MyApp());
+}
+
+class City {
+  final double lat;
+  final double lon;
+
+  const City({required this.lat, required this.lon});
+
+  factory City.fromJson(Map<String, dynamic> json) {
+    return City(
+      lat: json['lat'],
+      lon: json['lon'],
+    );
+  }
+}
+
+class Temp {
+  final double valueTemp;
+
+  const Temp({required this.valueTemp});
+
+  factory Temp.fromJson(Map<String, dynamic> json) {
+    return Temp(
+      valueTemp: json['main']['temp'],
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -62,6 +91,10 @@ class _MyHomePageState extends State<MyHomePage> {
   var _score = 0;
 
   List<String> _cityNames = [];
+  late Future<City> futureCity1;
+  late Future<City> futureCity2;
+  late Future<Temp> futureCity1Temp;
+  late Future<Temp> futureCity2Temp;
 
   List<String> getCityNames() {
     var cityList = [
@@ -74,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
       'Moscow',
       'Madrid',
       'Ottawa',
-      'Washingdon D.C',
+      'Washington D.C',
       'Melbourne',
       'Luxembourg'
     ];
@@ -83,19 +116,85 @@ class _MyHomePageState extends State<MyHomePage> {
     return cityList.take(2).toList();
   }
 
-  _MyHomePageState() {
-    _cityNames = getCityNames();
+  Future<City> fetchCityLatLon(String cityName) async {
+    final response = await http.get(Uri.parse(
+        'http://api.openweathermap.org/geo/1.0/direct?q=$cityName&limit=1&appid=34ac798907aa71668169374a2764f675'));
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Iterable l = jsonDecode(response.body);
+      List<City> cities = List<City>.from(l.map((e) => City.fromJson(e)));
+      return cities[0];
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
   }
 
-  void _result(bool answer) {
+  Future<Temp> fetchCityTemp(double lat, double lon) async {
+    final response = await http.get(Uri.parse(
+        'http://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&appid=34ac798907aa71668169374a2764f675'));
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      return Temp.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
+
+  //bool isHotter (double temp1, double temp2) => temp1>temp2;
+
+  void _isHotter() async {
+    var temp1 = (await futureCity1Temp).valueTemp;
+    var temp2 = (await futureCity2Temp).valueTemp;
+
+    print(temp1);
+    print(temp2);
+
     setState(() {
-      if (answer == true) {
+      if (temp1 > temp2) {
+        _score++;
+      } else {
+        _score = 0;
+      }
+      getCityTemps();
+    });
+  }
+
+  void _isColder() async {
+    var temp1 = (await futureCity1Temp).valueTemp;
+    var temp2 = (await futureCity2Temp).valueTemp;
+
+    setState(() {
+      if (temp1 < temp2) {
         _score++;
       } else {
         _score = 0;
       }
       _cityNames = getCityNames();
     });
+  }
+
+  void getCityTemps() {
+    _cityNames = getCityNames();
+    futureCity1 = fetchCityLatLon(_cityNames[0]);
+    futureCity2 = fetchCityLatLon(_cityNames[1]);
+    futureCity1
+        .then((value) => futureCity1Temp = fetchCityTemp(value.lat, value.lon));
+    futureCity2
+        .then((value) => futureCity2Temp = fetchCityTemp(value.lat, value.lon));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getCityTemps();
   }
 
   @override
@@ -203,7 +302,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       //onPressed: _increaseScore,
-                      onPressed: () => {_result(true)},
+                      onPressed: () => _isHotter(),
                       child: const Text(
                         'Hot',
                         textAlign: TextAlign.center,
@@ -227,7 +326,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                       ),
-                      onPressed: () => {_result(false)},
+                      onPressed: () => _isColder(),
                       child: const Text(
                         'Cold',
                         textAlign: TextAlign.center,
