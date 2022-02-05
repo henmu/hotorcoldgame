@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'question.dart';
 import 'answerButtons.dart';
 import 'score.dart';
+import 'temp.dart';
+import 'city.dart';
 
 void main() {
   //Might help with quality of gradient background, but needs more testing.
@@ -16,36 +18,9 @@ void main() {
   runApp(const MyApp());
 }
 
-class City {
-  final double lat;
-  final double lon;
-
-  const City({required this.lat, required this.lon});
-
-  factory City.fromJson(Map<String, dynamic> json) {
-    return City(
-      lat: json['lat'],
-      lon: json['lon'],
-    );
-  }
-}
-
-class Temp {
-  final num valueTemp;
-
-  const Temp({required this.valueTemp});
-
-  factory Temp.fromJson(Map<String, dynamic> json) {
-    return Temp(
-      valueTemp: json['main']['temp'],
-    );
-  }
-}
-
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
@@ -57,14 +32,6 @@ class MyApp extends StatelessWidget {
 
 class HotOrCold extends StatefulWidget {
   const HotOrCold({Key? key, required this.title}) : super(key: key);
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -116,7 +83,6 @@ class _HotOrColdState extends State<HotOrCold> {
     var temp1 = (await futureCity1Temp).valueTemp;
     var temp2 = (await futureCity2Temp).valueTemp;
 
-    print('isHotter pressed');
     setState(() {
       if (temp1 > temp2) {
         _score++;
