@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'question.dart';
+
 void main() {
   //Making android status bar transparent.
-  WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-  ));
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+  //   statusBarColor: Colors.transparent,
+  // ));
 
   //Might help with quality of gradient background, but needs more testing.
   //Paint.enableDithering = true;
@@ -57,9 +59,33 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _score = 0;
-  String _cityname1 = "City name yksi";
-  String _cityname2 = "City name kaksi";
+  var _score = 0;
+
+  List<String> _cityNames = [];
+
+  List<String> getCityNames() {
+    var cityList = [
+      'Helsinki',
+      'Stockholm',
+      'Tokyo',
+      'Singapore',
+      'Paris',
+      'Rome',
+      'Moscow',
+      'Madrid',
+      'Ottawa',
+      'Washingdon D.C',
+      'Melbourne',
+      'Luxembourg'
+    ];
+
+    cityList.shuffle();
+    return cityList.take(2).toList();
+  }
+
+  _MyHomePageState() {
+    _cityNames = getCityNames();
+  }
 
   void _result(bool answer) {
     setState(() {
@@ -68,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
       } else {
         _score = 0;
       }
+      _cityNames = getCityNames();
     });
   }
 
@@ -79,11 +106,14 @@ class _MyHomePageState extends State<MyHomePage> {
     */
 
     //Answer button size
-    const Size koko = Size(150, 235);
+    // const Size koko = Size(150, 235);
 
-    //Trying to make Gradient background color for whole app.
-    //return Scaffold(
+    //Fullscreen enabling
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive,
+        overlays: [SystemUiOverlay.bottom]);
+
     return Container(
+      //Gradiant background color
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: FractionalOffset(1.0, 0.0),
@@ -118,15 +148,10 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),*/
         body: Container(
-          alignment: Alignment.topCenter,
-          padding: const EdgeInsets.only(
-            top: 130.0,
-            bottom: 90.0,
-            left: 10.0,
-            right: 10.0,
-          ),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.all(16.0),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -136,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 37,
-                      fontFamily: 'Roboco',
+                      fontFamily: 'Roboto',
                     ),
                   ),
                   Text(
@@ -144,71 +169,69 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Roboco',
+                      fontFamily: 'Roboto',
                       fontSize: 50,
                     ),
                   ),
                 ],
               ),
-              Text(
-                'Is ' +
-                    _cityname1 +
-                    ' hotter or colder than ' +
-                    _cityname2 +
-                    '?',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Roboto',
-                  letterSpacing: 0.5,
-                  fontSize: 40,
-                ),
-              ),
-              const SizedBox(height: 120),
+              Question(cityNames: _cityNames),
+              // TopSection(
+              //   score: _score,
+              //   cityname1: _cityname1,
+              //   cityname2: _cityname2,
+              // ),
               Row(
-                //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: koko,
-                      primary: const Color(0xFFDD3434),
-                      onPrimary: Colors.black87,
-                      textStyle: const TextStyle(fontSize: 50),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(35),
-                          bottomLeft: Radius.circular(35),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(double.infinity,
+                            235), // TODO: height should be % of screen?
+                        // maximumSize: const Size(double.infinity, 1235),
+                        // minimumSize: const Size(double.infinity, 235),
+                        // padding: const EdgeInsets.only(top: 80, bottom: 80),
+                        primary: const Color(0xFFDD3434),
+                        onPrimary: Colors.black87,
+                        textStyle: const TextStyle(fontSize: 50),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(35),
+                            bottomLeft: Radius.circular(35),
+                          ),
                         ),
                       ),
-                    ),
-                    //onPressed: _increaseScore,
-                    onPressed: () => {_result(true)},
-                    child: const Text(
-                      'Hot',
-                      textAlign: TextAlign.center,
+                      //onPressed: _increaseScore,
+                      onPressed: () => {_result(true)},
+                      child: const Text(
+                        'Hot',
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 13),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: koko,
-                      primary: const Color(0xFF1F94DE),
-                      onPrimary: Colors.black,
-                      textStyle: const TextStyle(fontSize: 50),
-                      shape: const RoundedRectangleBorder(
-                        //borderRadius: BorderRadius.circular(50),
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(35),
-                          bottomRight: Radius.circular(35),
+                  const VerticalDivider(width: 13.0),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(double.infinity,
+                            235), // TODO: height should be % of screen?
+                        primary: const Color(0xFF1F94DE),
+                        onPrimary: Colors.black,
+                        textStyle: const TextStyle(fontSize: 50),
+                        shape: const RoundedRectangleBorder(
+                          // borderRadius: BorderRadius.circular(50),
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(35),
+                            bottomRight: Radius.circular(35),
+                          ),
                         ),
                       ),
-                    ),
-                    onPressed: () => {_result(false)},
-                    child: const Text(
-                      'Cold',
-                      textAlign: TextAlign.center,
+                      onPressed: () => {_result(false)},
+                      child: const Text(
+                        'Cold',
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
                 ],
