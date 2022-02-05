@@ -6,15 +6,53 @@ class Question extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      'Is ' + cityNames[0] + ' hotter or colder than ' + cityNames[1] + '?',
-      textAlign: TextAlign.center,
-      style: const TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-        fontFamily: 'Roboto',
-        letterSpacing: 0.5,
-        fontSize: 40,
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.25,
+      width: double.infinity,
+      alignment: Alignment.center,
+      child: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Roboto',
+            letterSpacing: 0.5,
+            fontSize: 39,
+          ),
+          children: <TextSpan>[
+            const TextSpan(
+              text: 'Is ',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            TextSpan(
+              text: cityNames[0],
+              style: const TextStyle(
+                color: Colors.orange,
+              ),
+            ),
+            const TextSpan(
+              text: ' hotter or colder than ',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            TextSpan(
+              text: cityNames[1],
+              style: const TextStyle(
+                color: Colors.orange,
+              ),
+            ),
+            const TextSpan(
+              text: '?',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

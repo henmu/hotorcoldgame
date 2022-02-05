@@ -17,7 +17,9 @@ class AnswerButtons extends StatelessWidget {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               fixedSize: const Size(
-                  double.infinity, 235), // TODO: height should be % of screen?
+                double.infinity,
+                235,
+              ), // TODO: height should be % of screen?
               // maximumSize: const Size(double.infinity, 1235),
               // minimumSize: const Size(double.infinity, 235),
               // padding: const EdgeInsets.only(top: 80, bottom: 80),
@@ -32,9 +34,10 @@ class AnswerButtons extends StatelessWidget {
               ),
             ),
             onPressed: isHotter,
-            child: const Text(
-              'Hot',
-              textAlign: TextAlign.center,
+            child: const Icon(
+              Icons.keyboard_arrow_up,
+              size: 80,
+              color: Colors.black54,
             ),
           ),
         ),
@@ -43,7 +46,9 @@ class AnswerButtons extends StatelessWidget {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               fixedSize: const Size(
-                  double.infinity, 235), // TODO: height should be % of screen?
+                double.infinity,
+                235,
+              ), // TODO: height should be % of screen?
               primary: const Color(0xFF1F94DE),
               onPrimary: Colors.black,
               textStyle: const TextStyle(fontSize: 50),
@@ -55,9 +60,10 @@ class AnswerButtons extends StatelessWidget {
               ),
             ),
             onPressed: isColder,
-            child: const Text(
-              'Cold',
-              textAlign: TextAlign.center,
+            child: const Icon(
+              Icons.keyboard_arrow_down,
+              size: 80,
+              color: Colors.black54,
             ),
           ),
         ),

@@ -149,6 +149,7 @@ class _HotOrColdState extends State<HotOrCold> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive,
         overlays: [SystemUiOverlay.bottom]);
 
+    //Container is for making gradient bg color.
     return Container(
       //Gradiant background color
       decoration: const BoxDecoration(
