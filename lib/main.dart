@@ -2,17 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hotorcoldgame/score.dart';
 import 'package:http/http.dart' as http;
 
 import 'question.dart';
+import 'answerButtons.dart';
+import 'score.dart';
 
 void main() {
-  //Making android status bar transparent.
-  // WidgetsFlutterBinding.ensureInitialized();
-  // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-  //   statusBarColor: Colors.transparent,
-  // ));
-
   //Might help with quality of gradient background, but needs more testing.
   //Paint.enableDithering = true;
 
@@ -34,7 +31,7 @@ class City {
 }
 
 class Temp {
-  final double valueTemp;
+  final num valueTemp;
 
   const Temp({required this.valueTemp});
 
@@ -51,27 +48,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'hotorcold',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Hotter or Colder Game'),
+      home: HotOrCold(title: 'Hotter or Colder Game'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+class HotOrCold extends StatefulWidget {
+  const HotOrCold({Key? key, required this.title}) : super(key: key);
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
@@ -84,37 +69,16 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HotOrCold> createState() => _HotOrColdState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  var _score = 0;
-
+class _HotOrColdState extends State<HotOrCold> {
+  int _score = 0;
   List<String> _cityNames = [];
   late Future<City> futureCity1;
   late Future<City> futureCity2;
   late Future<Temp> futureCity1Temp;
   late Future<Temp> futureCity2Temp;
-
-  List<String> getCityNames() {
-    var cityList = [
-      'Helsinki',
-      'Stockholm',
-      'Tokyo',
-      'Singapore',
-      'Paris',
-      'Rome',
-      'Moscow',
-      'Madrid',
-      'Ottawa',
-      'Washington D.C',
-      'Melbourne',
-      'Luxembourg'
-    ];
-
-    cityList.shuffle();
-    return cityList.take(2).toList();
-  }
 
   Future<City> fetchCityLatLon(String cityName) async {
     final response = await http.get(Uri.parse(
@@ -148,15 +112,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  //bool isHotter (double temp1, double temp2) => temp1>temp2;
-
-  void _isHotter() async {
+  void isHotter() async {
     var temp1 = (await futureCity1Temp).valueTemp;
     var temp2 = (await futureCity2Temp).valueTemp;
 
-    print(temp1);
-    print(temp2);
-
+    print('isHotter pressed');
     setState(() {
       if (temp1 > temp2) {
         _score++;
@@ -167,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _isColder() async {
+  void isColder() async {
     var temp1 = (await futureCity1Temp).valueTemp;
     var temp2 = (await futureCity2Temp).valueTemp;
 
@@ -179,6 +139,26 @@ class _MyHomePageState extends State<MyHomePage> {
       }
       _cityNames = getCityNames();
     });
+  }
+
+  List<String> getCityNames() {
+    var cityList = [
+      'Helsinki',
+      'Stockholm',
+      'Tokyo',
+      'Singapore',
+      'Paris',
+      'Rome',
+      'Moscow',
+      'Madrid',
+      'Ottawa',
+      'Washington D.C',
+      'Melbourne',
+      'Luxembourg'
+    ];
+
+    cityList.shuffle();
+    return cityList.take(2).toList();
   }
 
   void getCityTemps() {
@@ -199,15 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    /*
-    final ButtonStyle style =
-        ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
-    */
-
-    //Answer button size
-    // const Size koko = Size(150, 235);
-
-    //Fullscreen enabling
+    //Make the app fullscreen
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive,
         overlays: [SystemUiOverlay.bottom]);
 
@@ -226,115 +198,15 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         primary: false,
-        /* Disabled AppBar to see if can design more pleasing UI
-      appBar: AppBar(
-        title: Text(widget.title),
-        //backgroundColor: Colors.white,
-        toolbarHeight: 40,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xFF3366FF),
-                Color(0xFF00CCFF),
-              ],
-              begin: FractionalOffset(0.0, 0.0),
-              end: FractionalOffset(1.0, 1.0),
-              stops: [0.0, 1.0],
-              tileMode: TileMode.clamp,
-            ),
-          ),
-        ),
-      ),*/
         body: Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Score:  ',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 37,
-                      fontFamily: 'Roboto',
-                    ),
-                  ),
-                  Text(
-                    '$_score',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Roboto',
-                      fontSize: 50,
-                    ),
-                  ),
-                ],
-              ),
+              Score(score: _score),
               Question(cityNames: _cityNames),
-              // TopSection(
-              //   score: _score,
-              //   cityname1: _cityname1,
-              //   cityname2: _cityname2,
-              // ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        fixedSize: const Size(double.infinity,
-                            235), // TODO: height should be % of screen?
-                        // maximumSize: const Size(double.infinity, 1235),
-                        // minimumSize: const Size(double.infinity, 235),
-                        // padding: const EdgeInsets.only(top: 80, bottom: 80),
-                        primary: const Color(0xFFDD3434),
-                        onPrimary: Colors.black87,
-                        textStyle: const TextStyle(fontSize: 50),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(35),
-                            bottomLeft: Radius.circular(35),
-                          ),
-                        ),
-                      ),
-                      //onPressed: _increaseScore,
-                      onPressed: () => _isHotter(),
-                      child: const Text(
-                        'Hot',
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  const VerticalDivider(width: 13.0),
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        fixedSize: const Size(double.infinity,
-                            235), // TODO: height should be % of screen?
-                        primary: const Color(0xFF1F94DE),
-                        onPrimary: Colors.black,
-                        textStyle: const TextStyle(fontSize: 50),
-                        shape: const RoundedRectangleBorder(
-                          // borderRadius: BorderRadius.circular(50),
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(35),
-                            bottomRight: Radius.circular(35),
-                          ),
-                        ),
-                      ),
-                      onPressed: () => _isColder(),
-                      child: const Text(
-                        'Cold',
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              AnswerButtons(isHotter: isHotter, isColder: isColder),
             ],
           ),
         ),
