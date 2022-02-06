@@ -5,16 +5,23 @@ import 'package:flutter/services.dart';
 import 'package:hotorcoldgame/score.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 import 'question.dart';
 import 'answerButtons.dart';
 import 'score.dart';
 import 'temp.dart';
 import 'city.dart';
 
-void main() {
+void main() async {
   //Might help with quality of gradient background, but needs more testing.
   //Paint.enableDithering = true;
-
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -40,12 +47,15 @@ class HotOrCold extends StatefulWidget {
 }
 
 class _HotOrColdState extends State<HotOrCold> {
+  bool firstRun = true;
   int _score = 0;
   List<String> _cityNames = [];
+  List<String> _cityList = [];
   late Future<City> futureCity1;
   late Future<City> futureCity2;
   late Future<Temp> futureCity1Temp;
   late Future<Temp> futureCity2Temp;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<City> fetchCityLatLon(String cityName) async {
     final response = await http.get(Uri.parse(
@@ -79,6 +89,61 @@ class _HotOrColdState extends State<HotOrCold> {
     }
   }
 
+  Future<void> fetchCityList() async {
+    final List<String> fetchedCityList = [];
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await firestore.collection('cities').get();
+
+    for (var element in querySnapshot.docs) {
+      fetchedCityList.add(element['cityName']);
+    }
+
+    print('Fetched these cities');
+    print(fetchedCityList);
+    _cityList = fetchedCityList;
+  }
+  // Future<List<String>> fetchCityList() async {
+  //   final List<String> cityList = [];
+  //   // Get docs from collection reference
+  //   QuerySnapshot querySnapshot = await firestore.collection('cities').get();
+
+  //   for (var element in querySnapshot.docs) {
+  //     cityList.add(element['cityName']);
+  //   }
+
+  //   print('Fetched these cities');
+  //   print(cityList);
+  //   return cityList;
+  // }
+  List<String> shuffleCities() {
+    // _cityList.shuffle();
+    List<String> tempCityList = _cityList;
+    _cityList.shuffle();
+    print('Shuffling');
+    print(tempCityList);
+    return tempCityList.take(2).toList();
+  }
+
+  List<String> getCityNames() {
+    var cityList = [
+      'Helsinki',
+      'Stockholm',
+      'Tokyo',
+      'Singapore',
+      'Paris',
+      'Rome',
+      'Moscow',
+      'Madrid',
+      'Ottawa',
+      'Washington D.C',
+      'Melbourne',
+      'Luxembourg'
+    ];
+
+    cityList.shuffle();
+    return cityList.take(2).toList();
+  }
+
   void isHotter() async {
     var temp1 = (await futureCity1Temp).valueTemp;
     var temp2 = (await futureCity2Temp).valueTemp;
@@ -103,32 +168,24 @@ class _HotOrColdState extends State<HotOrCold> {
       } else {
         _score = 0;
       }
-      _cityNames = getCityNames();
+      getCityTemps();
     });
   }
 
-  List<String> getCityNames() {
-    var cityList = [
-      'Helsinki',
-      'Stockholm',
-      'Tokyo',
-      'Singapore',
-      'Paris',
-      'Rome',
-      'Moscow',
-      'Madrid',
-      'Ottawa',
-      'Washington D.C',
-      'Melbourne',
-      'Luxembourg'
-    ];
-
-    cityList.shuffle();
-    return cityList.take(2).toList();
+  void getCityList() {
+    print('getting citylist');
   }
 
   void getCityTemps() {
-    _cityNames = getCityNames();
+    print('Getting temps');
+    if (firstRun == true) {
+      _cityNames = getCityNames();
+      firstRun = false;
+    } else {
+      _cityNames = shuffleCities();
+      print(_cityNames);
+    }
+    // _cityNames = shuffleCities();
     futureCity1 = fetchCityLatLon(_cityNames[0]);
     futureCity2 = fetchCityLatLon(_cityNames[1]);
     futureCity1
@@ -139,8 +196,10 @@ class _HotOrColdState extends State<HotOrCold> {
 
   @override
   void initState() {
+    //fetchCityList();
     super.initState();
     getCityTemps();
+    fetchCityList();
   }
 
   @override
