@@ -59,7 +59,7 @@ class _HotOrColdState extends State<HotOrCold> {
 
   Future<City> fetchCityLatLon(String cityName) async {
     final response = await http.get(Uri.parse(
-        'http://api.openweathermap.org/geo/1.0/direct?q=$cityName&limit=1&appid=34ac798907aa71668169374a2764f675'));
+        'weatherapisite with $cityName&limit=1&appid='));
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
@@ -76,7 +76,7 @@ class _HotOrColdState extends State<HotOrCold> {
 
   Future<Temp> fetchCityTemp(double lat, double lon) async {
     final response = await http.get(Uri.parse(
-        'http://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&appid=34ac798907aa71668169374a2764f675'));
+        'http://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&appid='));
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
